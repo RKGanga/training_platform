@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Contact Form Submission - Sunviva Technologies</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #0B0F14 0%, #121826 100%);
+            color: #ffffff;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .header .subtitle {
+            margin: 10px 0 0 0;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 30px;
+        }
+        .section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #6EE7F9;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #0B0F14;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .section-title::before {
+            content: "▸";
+            color: #6EE7F9;
+            margin-right: 8px;
+            font-size: 20px;
+        }
+        .field {
+            margin-bottom: 12px;
+            display: flex;
+        }
+        .field-label {
+            font-weight: 600;
+            color: #0B0F14;
+            min-width: 150px;
+        }
+        .field-value {
+            color: #555555;
+            flex: 1;
+        }
+        .message-box {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #e1e5e9;
+            margin-top: 10px;
+            font-style: italic;
+            line-height: 1.5;
+        }
+        .footer {
+            background: #0B0F14;
+            color: #9CA3AF;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+        }
+        .highlight {
+            color: #6EE7F9;
+            font-weight: 600;
+        }
+        .timestamp {
+            text-align: center;
+            color: #6B7280;
+            font-size: 12px;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌐 Sunviva Technologies</h1>
+            <div class="subtitle">New Contact Form Submission</div>
+        </div>
+        
+        <div class="content">
+            <div class="timestamp">
+                📅 Received on: {{ timestamp }}
+            </div>
+
+            <div class="section">
+                <div class="section-title">Contact Information</div>
+                
+                <div class="field">
+                    <span class="field-label">👤 Full Name:</span>
+                    <span class="field-value highlight">{{ name }}</span>
+                </div>
+                
+                <div class="field">
+                    <span class="field-label">📧 Email Address:</span>
+                    <span class="field-value">
+                        <a href="mailto:{{ email }}" style="color: #6EE7F9; text-decoration: none;">{{ email }}</a>
+                    </span>
+                </div>
+                
+                <div class="field">
+                    <span class="field-label">📞 Phone Number:</span>
+                    <span class="field-value">
+                        {% if phone %}
+                            <a href="tel:{{ phone }}" style="color: #6EE7F9; text-decoration: none;">{{ phone }}</a>
+                        {% else %}
+                            <span style="color: #6B7280;">Not provided</span>
+                        {% endif %}
+                    </span>
+                </div>
+                
+                <div class="field">
+                    <span class="field-label">🎯 Course Interested:</span>
+                    <span class="field-value">
+                        {% if course_interested %}
+                            <strong>{{ course_interested }}</strong>
+                        {% else %}
+                            <span style="color: #6B7280;">Not specified</span>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+
+            {% if message %}
+            <div class="section">
+                <div class="section-title">📝 Message</div>
+                <div class="message-box">
+                    {{ message|linebreaks }}
+                </div>
+            </div>
+            {% endif %}
+
+            <div style="text-align: center; margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 8px;">
+                <div style="font-size: 14px; color: #6B7280; margin-bottom: 10px;">
+                    This contact form was submitted through the Sunviva Technologies website.
+                </div>
+                <div style="font-size: 12px; color: #9CA3AF;">
+                    Please respond to this inquiry within 24 hours.
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div>Sunviva Technologies - IT Training & Career Development</div>
+            <div>📍 123 Tech Street, Learning City | 📞 +91 95508 04579</div>
+            <div>🌐 www.sunvivatechnologies.com | 📧 hr@sunvivatechnologies.com</div>
+        </div>
+    </div>
+</body>
+</html>

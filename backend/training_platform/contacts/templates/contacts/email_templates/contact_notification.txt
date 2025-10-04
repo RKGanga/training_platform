@@ -1,0 +1,27 @@
+NEW CONTACT FORM SUBMISSION - SUNVIVA TECHNOLOGIES
+===================================================
+
+Timestamp: {{ timestamp }}
+
+CONTACT INFORMATION:
+-------------------
+Name: {{ name }}
+Email: {{ email }}
+Phone: {{ phone|default:"Not provided" }}
+Course Interested: {{ course_interested|default:"Not specified" }}
+
+{% if message %}
+MESSAGE:
+--------
+{{ message }}
+{% endif %}
+
+---
+This contact form was submitted through the Sunviva Technologies website.
+Please respond to this inquiry within 24 hours.
+
+Sunviva Technologies
+IT Training & Career Development
+Phone: +91 95508 04579
+Email: hr@sunvivatechnologies.com
+Website: www.sunvivatechnologies.com
