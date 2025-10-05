@@ -19,13 +19,8 @@ services:
           property: connectionString
       - key: FRONTEND_URL
         value: https://training-platform-frontend.onrender.com
-
-  # PostgreSQL Database
-  - type: pserv
-    name: training-platform-db
-    databaseName: training_platform
-    user: training_platform_user
-    password: training_platform_password
+      - key: ALLOWED_HOSTS
+        value: training-platform-backend.onrender.com
 
   # React Frontend
   - type: web
@@ -36,3 +31,8 @@ services:
     envVars:
       - key: VITE_API_URL
         value: https://training-platform-backend.onrender.com/api
+
+databases:
+  - name: training-platform-db
+    databaseName: training_platform
+    user: training_platform_user
