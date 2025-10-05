@@ -22,7 +22,7 @@ const CourseCard = ({ course }) => {
   
 
   return (
-    <div className="bg-gray-900 rounded-lg p-6 border border-gray-800 hover:border-cyan-500 transition-all duration-300 hover:transform hover:scale-105 cursor-pointer group">
+    <div className="bg-gray-900 rounded-lg p-6 border border-gray-800 hover:border-cyan-500 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10 cursor-pointer group">
       <div className="mb-4">
         <span className={`text-xs font-medium px-3 py-1 rounded ${categoryBg}`}>
           {course.category}

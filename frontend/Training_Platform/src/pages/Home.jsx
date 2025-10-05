@@ -1,16 +1,72 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { courseService } from '../services/api';
-import { 
+import {
   Play, BookOpen, Award, Terminal, ArrowRight, User, Star, Users, Calendar,
   Shield, Cloud, Server, Cpu, Database, Zap, ChevronRight
 } from 'lucide-react';
+
+// Custom hook for scroll animations
+const useScrollAnimation = (threshold = 0.1) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => observer.disconnect();
+  }, [threshold]);
+
+  return { ref, isVisible };
+};
+
+// Animation wrapper component for staggered animations
+const ScrollAnimation = ({ children, delay = 0, className = '', animation = 'fadeInUp' }) => {
+  const { ref, isVisible } = useScrollAnimation();
+
+  const animations = {
+    fadeInUp: `transform transition-all duration-700 ease-out ${
+      isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+    }`,
+    fadeInLeft: `transform transition-all duration-700 ease-out ${
+      isVisible ? 'translate-x-0 opacity-100' : '-translate-x-8 opacity-0'
+    }`,
+    fadeInRight: `transform transition-all duration-700 ease-out ${
+      isVisible ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'
+    }`,
+    scaleIn: `transform transition-all duration-700 ease-out ${
+      isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
+    }`
+  };
+
+  return (
+    <div
+      ref={ref}
+      className={`${animations[animation]} ${className}`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+};
 
 const Home = () => {
   const [featuredCourses, setFeaturedCourses] = useState([]);
   const [allCourses, setAllCourses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('profile');
+  const [activeTab, setActiveTab] = useState('experience');
 
   useEffect(() => {
     const loadCourses = async () => {
@@ -36,7 +92,7 @@ const Home = () => {
     {
       name: 'Cloud',
       icon: Cloud,
-      description: 'Learn GCP, Azure, and AWS cloud platforms',
+      description: 'Learn GCP, Azure, and cloud platforms',
       color: 'text-blue-500'
     },
     {
@@ -85,7 +141,6 @@ const Home = () => {
   ];
 
   const skills = [
-    { name: 'AWS', level: 95, icon: Cloud },
     { name: 'Kubernetes', level: 90, icon: Cpu },
     { name: 'Docker', level: 92, icon: Database },
     { name: 'Terraform', level: 88, icon: Server },
@@ -105,7 +160,7 @@ const Home = () => {
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
+          <ScrollAnimation className="text-center" animation="fadeInUp">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
               Master Cloud - <span className="text-cyan-400">Transform your career</span> with elite training
             </h1>
@@ -113,44 +168,54 @@ const Home = () => {
               Advance your career with practical, industry-focused training in cloud technologies, 
               DevOps practices, and Linux system administration.
             </p>
-            <Link
-              to="/courses"
-              className="bg-cyan-500 text-white px-8 py-4 rounded-2xl font-semibold hover:bg-cyan-600 transition-colors inline-flex items-center space-x-2"
-            >
-              <span>Start Learning</span>
-              <ArrowRight className="h-5 w-5" />
-            </Link>
-          </div>
+            <ScrollAnimation delay={300} animation="scaleIn">
+              <Link
+                to="/courses"
+                className="bg-cyan-500 text-white px-8 py-4 rounded-2xl font-semibold hover:bg-cyan-600 transition-colors inline-flex items-center space-x-2"
+              >
+                <span>Start Learning</span>
+                <ArrowRight className="h-5 w-5" />
+              </Link>
+            </ScrollAnimation>
+          </ScrollAnimation>
         </div>
       </section>
 
       {/* Categories Section */}
       <section className="py-16 bg-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-white text-center mb-12">
-            Explore by Category
-          </h2>
+          <ScrollAnimation className="text-center mb-12" animation="fadeInUp">
+            <h2 className="text-3xl font-bold text-white">
+              Explore by Category
+            </h2>
+          </ScrollAnimation>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {categories.map((category) => (
-              <Link
+            {categories.map((category, index) => (
+              <ScrollAnimation
                 key={category.name}
-                to={`/courses?category=${category.name}`}
-                className="bg-gray-900 rounded-2xl p-6 border border-gray-800 hover:border-cyan-500 transition-all duration-300 group hover:shadow-lg hover:shadow-cyan-500/10"
+                delay={index * 150}
+                animation="fadeInUp"
+                className="h-full"
               >
-                <div className={`${category.color} mb-4 group-hover:scale-110 transition-transform`}>
-                  <category.icon className="h-8 w-8" />
-                </div>
-                <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-cyan-400 transition-colors">
-                  {category.name}
-                </h3>
-                <p className="text-gray-400 text-sm mb-4">
-                  {category.description}
-                </p>
-                <div className="flex items-center text-cyan-400 text-sm font-medium">
-                  <span>Explore</span>
-                  <ArrowRight className="h-4 w-4 ml-1 transform group-hover:translate-x-1 transition-transform" />
-                </div>
-              </Link>
+                <Link
+                  to={`/courses?category=${category.name}`}
+                  className="bg-gray-900 rounded-2xl p-6 border border-gray-800 hover:border-cyan-500 transition-all duration-300 group hover:shadow-lg hover:shadow-cyan-500/10 h-full flex flex-col"
+                >
+                  <div className={`${category.color} mb-4 group-hover:scale-110 transition-transform`}>
+                    <category.icon className="h-8 w-8" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-cyan-400 transition-colors">
+                    {category.name}
+                  </h3>
+                  <p className="text-gray-400 text-sm mb-4 flex-grow">
+                    {category.description}
+                  </p>
+                  <div className="flex items-center text-cyan-400 text-sm font-medium mt-auto">
+                    <span>Explore</span>
+                    <ArrowRight className="h-4 w-4 ml-1 transform group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </Link>
+              </ScrollAnimation>
             ))}
           </div>
         </div>
@@ -159,28 +224,35 @@ const Home = () => {
       {/* Why Choose Us Section */}
       <section className="py-16 bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+          <ScrollAnimation className="text-center mb-12" animation="fadeInUp">
             <h2 className="text-3xl font-bold text-white mb-4">
               Why Choose <span className="text-cyan-400">Sunviva Technologies</span>?
             </h2>
             <p className="text-gray-300 text-lg max-w-2xl mx-auto">
               Our institute is dedicated to providing top‑tier IT training that prepares you for success in the tech industry.
             </p>
-          </div>
-          
+          </ScrollAnimation>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {whyChooseUs.map((item, index) => (
-              <div key={index} className="bg-gray-800 rounded-2xl p-8 border border-gray-700 hover:border-cyan-500 transition-all duration-300 group hover:shadow-lg hover:shadow-cyan-500/10">
-                <div className="bg-gray-900 rounded-xl p-4 w-16 h-16 flex items-center justify-center mb-6 mx-auto group-hover:bg-cyan-500 group-hover:text-white transition-colors">
-                  <item.icon className="h-8 w-8" />
+              <ScrollAnimation
+                key={index}
+                delay={index * 200}
+                animation="fadeInUp"
+                className="h-full"
+              >
+                <div className="bg-gray-800 rounded-2xl p-8 border border-gray-700 hover:border-cyan-500 transition-all duration-300 group hover:shadow-lg hover:shadow-cyan-500/10 h-full flex flex-col">
+                  <div className="bg-gray-900 rounded-xl p-4 w-16 h-16 flex items-center justify-center mb-6 mx-auto group-hover:bg-cyan-500 group-hover:text-white transition-colors">
+                    <item.icon className="h-8 w-8" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-white mb-4 group-hover:text-cyan-400 transition-colors">
+                    {item.title}
+                  </h3>
+                  <p className="text-gray-400 flex-grow">
+                    {item.description}
+                  </p>
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-4 group-hover:text-cyan-400 transition-colors">
-                  {item.title}
-                </h3>
-                <p className="text-gray-400">
-                  {item.description}
-                </p>
-              </div>
+              </ScrollAnimation>
             ))}
           </div>
         </div>
@@ -189,11 +261,11 @@ const Home = () => {
       {/* Learn from Industry Expert */}
       <section className="py-16 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
         {/* Background Effects */}
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/3 to-purple-600/3"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/1 to-purple-600/1"></div>
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center mb-12">
-            <div className="inline-flex items-center px-3 py-1 bg-cyan-500/10 rounded-full border border-cyan-500/20 mb-4">
+            <div className="inline-flex items-center px-3 py-1 bg-cyan-500/5 rounded-full border border-cyan-500/10 mb-4">
               <Star className="w-4 h-4 text-cyan-400 mr-2" />
               <span className="text-cyan-400 font-medium text-sm">Industry Expert</span>
             </div>
@@ -206,14 +278,14 @@ const Home = () => {
           </div>
 
           {/* Compact Profile Dashboard */}
-          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl shadow-xl border border-gray-700/50 overflow-hidden hover:shadow-cyan-500/10 transition-all duration-300 hover:border-cyan-500/30">
+          <div className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 rounded-2xl shadow-xl border border-gray-700/30 overflow-hidden hover:shadow-cyan-500/10 transition-all duration-300 hover:border-cyan-500/20">
             {/* Header with Profile & Stats */}
-            <div className="bg-gradient-to-r from-cyan-600/90 to-purple-700/90 p-6 relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-purple-600/20 animate-pulse"></div>
+            <div className="bg-gradient-to-r from-cyan-600/70 to-purple-700/70 p-6 relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-purple-600/10 animate-pulse"></div>
               <div className="flex flex-col md:flex-row items-center justify-between relative z-10">
                 <div className="flex items-center space-x-6 mb-4 md:mb-0">
                   <div className="relative">
-                    <div className="w-20 h-20 rounded-full border-3 border-gray-800/50 bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center shadow-xl">
+                    <div className="w-20 h-20 rounded-full border-3 border-gray-800/30 bg-gradient-to-br from-gray-900/80 to-gray-800/80 flex items-center justify-center shadow-xl">
                       <User className="w-10 h-10 text-cyan-400" />
                     </div>
                     <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-3 border-gray-800 flex items-center justify-center">
@@ -270,7 +342,7 @@ const Home = () => {
                       'Proven educational methodologies',
                       'Technology integration expertise'
                     ].map((experience, index) => (
-                      <div key={index} className="flex items-center space-x-3 p-3 bg-gray-700/30 rounded-lg border border-gray-600/30">
+                      <div key={index} className="flex items-center space-x-3 p-3 bg-gray-700/20 rounded-lg border border-gray-600/20">
                         <Shield className="w-4 h-4 text-cyan-400 flex-shrink-0" />
                         <span className="text-gray-300 text-sm">{experience}</span>
                       </div>
@@ -284,7 +356,7 @@ const Home = () => {
                   <h3 className="text-lg font-semibold text-white mb-3">Technical Expertise</h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {skills.map((skill, index) => (
-                      <div key={index} className="space-y-2 p-3 bg-gray-700/30 rounded-lg border border-gray-600/30">
+                      <div key={index} className="space-y-2 p-3 bg-gray-700/20 rounded-lg border border-gray-600/20">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
                             <skill.icon className="w-4 h-4 text-cyan-400" />
@@ -309,7 +381,6 @@ const Home = () => {
                   <h3 className="text-lg font-semibold text-white mb-3">Professional Certifications</h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                     {[
-                      'AWS Solutions Architect Pro',
                       'Google Cloud Architect',
                       'Kubernetes Administrator',
                       'Terraform Associate',
@@ -318,7 +389,7 @@ const Home = () => {
                       'Azure Solutions Expert',
                       'Red Hat Certified'
                     ].map((cert, index) => (
-                      <div key={index} className="flex items-center space-x-2 p-2 bg-gray-700/50 rounded-lg border border-gray-600/30 text-xs">
+                      <div key={index} className="flex items-center space-x-2 p-2 bg-gray-700/30 rounded-lg border border-gray-600/20 text-xs">
                         <Award className="w-3 h-3 text-cyan-400 flex-shrink-0" />
                         <span className="text-gray-300 truncate">{cert}</span>
                       </div>
@@ -330,7 +401,7 @@ const Home = () => {
           </div>
 
           {/* Compact Mission Section */}
-          <div className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 rounded-2xl p-6 border border-gray-700/50 mt-8 hover:shadow-lg hover:shadow-cyan-500/5 transition-all duration-300">
+          <div className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 rounded-2xl p-6 border border-gray-700/30 mt-8 hover:shadow-lg hover:shadow-cyan-500/5 transition-all duration-300">
             <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
               <div className="text-center md:text-left">
                 <h3 className="text-xl font-bold text-white mb-2">Our Mission</h3>
@@ -343,7 +414,7 @@ const Home = () => {
 
               <div className="flex space-x-4">
                 {stats.slice(0, 2).map((stat, index) => (
-                  <div key={index} className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 rounded-xl p-4 text-center border border-gray-700/50 min-w-[100px]">
+                  <div key={index} className="bg-gradient-to-br from-gray-800/40 to-gray-900/40 rounded-xl p-4 text-center border border-gray-700/30 min-w-[100px]">
                     <div className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">{stat.number}</div>
                     <div className="text-gray-400 text-xs">{stat.label}</div>
                   </div>
@@ -357,21 +428,25 @@ const Home = () => {
       {/* CTA Section */}
       <section className="py-16 bg-gray-800">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="bg-gray-900 rounded-3xl p-12 border border-gray-700 hover:shadow-lg hover:shadow-cyan-500/10 transition-shadow">
-            <h2 className="text-3xl font-bold text-white mb-4">
-              Start Your Learning Journey Today
-            </h2>
-            <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
-              Join hundreds of professionals who have transformed their careers with our elite training programs.
-            </p>
-            <Link
-              to="/courses"
-              className="bg-cyan-500 text-white px-8 py-4 rounded-2xl font-semibold hover:bg-cyan-600 transition-colors inline-flex items-center space-x-2"
-            >
-              <span>Explore All Courses</span>
-              <ChevronRight className="h-5 w-5" />
-            </Link>
-          </div>
+          <ScrollAnimation animation="fadeInUp" className="mb-8">
+            <div className="bg-gray-900 rounded-3xl p-12 border border-gray-700 hover:shadow-lg hover:shadow-cyan-500/10 transition-shadow">
+              <h2 className="text-3xl font-bold text-white mb-4">
+                Start Your Learning Journey Today
+              </h2>
+              <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
+                Join hundreds of professionals who have transformed their careers with our elite training programs.
+              </p>
+              <ScrollAnimation delay={200} animation="scaleIn">
+                <Link
+                  to="/courses"
+                  className="bg-cyan-500 text-white px-8 py-4 rounded-2xl font-semibold hover:bg-cyan-600 transition-colors inline-flex items-center space-x-2"
+                >
+                  <span>Explore All Courses</span>
+                  <ChevronRight className="h-5 w-5" />
+                </Link>
+              </ScrollAnimation>
+            </div>
+          </ScrollAnimation>
         </div>
       </section>
     </div>

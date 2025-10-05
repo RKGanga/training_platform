@@ -153,13 +153,11 @@ const Contact = () => {
                     <option value="Redhat Linux Administration">Redhat Linux Administration</option>
                     <option value="Google Cloud Platform (GCP)">Google Cloud Platform (GCP)</option>
                     <option value="Microsoft Azure Fundamentals">Microsoft Azure Fundamentals</option>
-                    <option value="Amazon Web Services (AWS)">Amazon Web Services (AWS)</option>
                     <option value="Docker Containers">Docker Containers</option>
                     <option value="Kubernetes (K8s)">Kubernetes (K8s)</option>
                     <option value="Terraform Infrastructure as Code">Terraform Infrastructure as Code</option>
                     <option value="Ansible Automation">Ansible Automation</option>
                     <option value="Jenkins CI/CD">Jenkins CI/CD</option>
-                    <option value="Git Version Control">Git Version Control</option>
                     <option value="GitHub Actions">GitHub Actions</option>
                     <option value="Python Programming">Python Programming</option>
                     <option value="Bash/Shell Scripting">Bash/Shell Scripting</option>
